@@ -1,11 +1,13 @@
 class Message {
   final String text;
   final bool isUser;
-  final DateTime timestamp;
+  final bool isSystem;
+  final String? level; // Add this field
 
   Message({
     required this.text,
-    required this.isUser,
-    DateTime? timestamp, required bool isSystem,
-  }) : timestamp = timestamp ?? DateTime.now();
+    this.isUser = false,
+    this.isSystem = false,
+    this.level,
+  });
 }
