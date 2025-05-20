@@ -1,8 +1,8 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:areyousure/data/insults.dart';
 import 'package:areyousure/models/message.dart';
-import 'package:areyousure/widgets/insult_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -16,45 +16,40 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   String _currentLevel = 'mild';
   final List<String> _roastLevels = ['mild', 'medium', 'spicy', 'nuclear'];
   late HybridInsultGenerator _insultGenerator;
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
+  final ScrollController _scrollController = ScrollController();
+  bool _isDarkMode = true;
+  bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
     _insultGenerator = HybridInsultGenerator();
-    
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutBack,
-      ),
-    );
-    
-    _animationController.repeat(reverse: true);
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
+  void _addInsult() async {
+    setState(() {
+      _isTyping = true;
+    });
 
-  void _addInsult() {
+    await Future.delayed(const Duration(seconds: 2));
+
     final insult = _insultGenerator.generateInsult(level: _currentLevel);
-    
+
     setState(() {
       _messages.add(Message(
         text: insult,
         isUser: false,
         level: _currentLevel,
       ));
+      _isTyping = false;
     });
+
+    await Future.delayed(const Duration(milliseconds: 100));
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+    );
   }
 
   void _changeRoastLevel(String? newLevel) {
@@ -68,196 +63,189 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
           isSystem: true,
         ));
       });
-      
-      _animationController.reset();
-      _animationController.forward();
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+        );
+      });
     }
   }
 
   Color _getLevelColor(String level) {
     switch (level) {
-      case 'mild': return Colors.green;
-      case 'medium': return Colors.yellow;
-      case 'spicy': return Colors.orange;
-      case 'nuclear': return Colors.red;
-      default: return Colors.amber;
+      case 'mild':
+        return Colors.green;
+      case 'medium':
+        return Colors.yellow;
+      case 'spicy':
+        return Colors.orange;
+      case 'nuclear':
+        return Colors.red;
+      default:
+        return Colors.amber;
     }
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'ARE YOU SURE',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 155, 21, 179),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.light_mode, color: Colors.grey[400], size: 16),
+                    Switch(
+                      value: _isDarkMode,
+                      onChanged: (val) => setState(() => _isDarkMode = val),
+                      activeColor: const Color.fromARGB(255, 155, 21, 179),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    Icon(Icons.dark_mode, color: Colors.grey[400], size: 16),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'INTENSITY: ${_currentLevel.toUpperCase()}',
+                      style: TextStyle(
+                        color: Colors.grey[400],
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    LinearProgressIndicator(
+                      value: (_roastLevels.indexOf(_currentLevel) + 1) / _roastLevels.length,
+                      backgroundColor: Colors.grey[800],
+                      color: _getLevelColor(_currentLevel),
+                      minHeight: 4,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _currentLevel,
+                  dropdownColor: Colors.grey[850],
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.black.withOpacity(0.3),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white, size: 16),
+                  style: TextStyle(
+                    color: _getLevelColor(_currentLevel),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  items: _roastLevels.map((level) {
+                    return DropdownMenuItem<String>(
+                      value: level,
+                      child: Text(
+                        level.toUpperCase(),
+                        style: TextStyle(
+                          color: _getLevelColor(level),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: _changeRoastLevel,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
-      appBar: AppBar(
-        centerTitle: true,
-        title: AnimatedBuilder(
-          animation: _scaleAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '? ARE YOU SURE ?',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                      color: Colors.amber,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10,
-                          color: Colors.amber.withOpacity(0.7),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.amber.withOpacity(0.5),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: DropdownButton<String>(
-                      value: _currentLevel,
-                      dropdownColor: Colors.grey[900],
-                      icon: Icon(Icons.arrow_drop_down, color: Colors.amber, size: 20),
-                      underline: Container(),
-                      style: TextStyle(
-                        color: _getLevelColor(_currentLevel),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 5,
-                            color: Colors.black.withOpacity(0.5),
-                          ),
-                        ],
-                      ),
-                      items: _roastLevels.map((String level) {
-                        return DropdownMenuItem<String>(
-                          value: level,
-                          child: Text(
-                            level.toUpperCase(),
-                            style: TextStyle(
-                              color: _getLevelColor(level),
-                              fontWeight: FontWeight.bold,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 5,
-                                  color: Colors.black.withOpacity(0.5),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: _changeRoastLevel,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        backgroundColor: Colors.black,
+      backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _addInsult,
+        label: const Text('GET ROASTED'),
+        icon: const Icon(Icons.emoji_emotions),
+        backgroundColor: const Color.fromARGB(255, 155, 21, 179),
+        foregroundColor: Colors.white,
         elevation: 10,
-        shadowColor: Colors.amber.withOpacity(0.3),
-        toolbarHeight: 100,
-        flexibleSpace: Container(
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: SafeArea(
+        child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.grey[900]!,
-                Colors.black,
-                Colors.grey[900]!,
-              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: _isDarkMode
+                  ? [Colors.grey[900]!, Colors.black, Colors.grey[900]!]
+                  : [Colors.grey[200]!, Colors.white, Colors.grey[200]!],
+              stops: const [0.0, 0.3, 1.0],
             ),
           ),
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.grey[900]!,
-              Colors.black,
-              Colors.grey[900]!,
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.only(bottom: 100, top: 4),
+                  itemCount: _messages.length + (_isTyping ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (_isTyping && index == _messages.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        child: TypingIndicator(),
+                      );
+                    }
+                    final message = _messages[index];
+                    return BounceMessage(
+                      message: message,
+                      level: message.level ?? '',
+                    );
+                  },
+                ),
+              ),
             ],
-            stops: const [0.0, 0.3, 1.0],
           ),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (_messages.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            'Press the button to get roasted!',
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ..._messages.map((message) => BounceMessage(
-                            message: message,
-                            level: message.level ?? '',
-                          )),
-                      const SizedBox(height: 80), // Space for button
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ElevatedButton(
-                onPressed: _addInsult,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 10,
-                  shadowColor: Colors.amber.withOpacity(0.5),
-                ),
-                child: const Text(
-                  'GET ROASTED',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -282,15 +270,38 @@ class _BounceMessageState extends State<BounceMessage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _bounceAnimation;
+    double ? _tiltAngle;
+
+  Color _getBackgroundColor(String level) {
+    switch (level) {
+      case 'mild':
+        return Colors.green.withOpacity(0.85);
+      case 'medium':
+        return Colors.yellow[700]!.withOpacity(0.85);
+      case 'spicy':
+        return Colors.deepOrange.withOpacity(0.9);
+      case 'nuclear':
+        return Colors.red[800]!.withOpacity(0.9);
+      default:
+        return Colors.purple[300]!;
+    }
+  }
+
+  double _generateRandomTilt() {
+    final random = Random();
+    return (random.nextDouble() * 0.08) - 0.04; // -0.04 to 0.04 radians
+  }
 
   @override
   void initState() {
     super.initState();
+    _tiltAngle = _generateRandomTilt();
+
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    
+
     _bounceAnimation = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.2), weight: 50),
       TweenSequenceItem(tween: Tween(begin: 1.2, end: 0.9), weight: 20),
@@ -301,7 +312,7 @@ class _BounceMessageState extends State<BounceMessage>
         curve: Curves.easeOut,
       ),
     );
-    
+
     _controller.forward();
   }
 
@@ -313,22 +324,91 @@ class _BounceMessageState extends State<BounceMessage>
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = _getBackgroundColor(widget.level);
+
     return AnimatedBuilder(
       animation: _bounceAnimation,
       builder: (context, child) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Transform.scale(
-            scale: _bounceAnimation.value,
-            child: InsultBubble(
-              widget.message,
-              isLast: true,
-              random: Random(),
-              insultLevel: widget.level,
+        return Center(
+          child: Transform.rotate(
+            angle: _tiltAngle ?? 0.0,
+            child: Transform.scale(
+              scale: _bounceAnimation.value,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,
+                ),
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: const Offset(2, 4),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  widget.message.text,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    fontFamily: 'ComicSans', // or try a custom one like 'LuckiestGuy' or 'Chewy'
+                    letterSpacing: 0.5,
+                    height: 1.3,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 2,
+                        color: Colors.black26,
+                        offset: Offset(1, 1),
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class TypingIndicator extends StatelessWidget {
+  const TypingIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _dot(),
+        const SizedBox(width: 4),
+        _dot(delay: 200),
+        const SizedBox(width: 4),
+        _dot(delay: 400),
+      ],
+    );
+  }
+
+  Widget _dot({int delay = 0}) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      builder: (context, value, child) => Opacity(
+        opacity: value,
+        child: child,
+      ),
+      onEnd: () {},
+      child: const CircleAvatar(
+        radius: 4,
+        backgroundColor: Color.fromARGB(255, 67, 2, 78),
+      ),
     );
   }
 }

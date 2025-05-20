@@ -7,7 +7,7 @@ class InsultBubble extends StatelessWidget {
   final bool isLast;
   final Random random;
   final bool isLoading;
-  final String insultLevel; // Now required
+  final String insultLevel;
   
   const InsultBubble(
     this.message, {
@@ -15,7 +15,7 @@ class InsultBubble extends StatelessWidget {
     required this.isLast,
     required this.random,
     this.isLoading = false,
-    required this.insultLevel, // Made required
+    required this.insultLevel,
   });
 
   @override
@@ -60,43 +60,26 @@ class InsultBubble extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Stack(
-            children: [
-              if (!isUser && !isLoading)
-                Positioned(
-                  left: -10,
-                  top: 0,
-                  child: Icon(
-                    Icons.bolt,
-                    color: _getBoltColor(insultLevel),
-                    size: 24,
-                  ),
-                ),
-              if (isLoading)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  child: Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
+          child: Center(
+            child: isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    message.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: textColor,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: isUser ? FontStyle.normal : FontStyle.italic,
                     ),
                   ),
-                )
-              else
-                Text(
-                  message.text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textColor,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: isUser ? FontStyle.normal : FontStyle.italic,
-                  ),
-                ),
-            ],
           ),
         ),
       ),
@@ -115,21 +98,6 @@ class InsultBubble extends StatelessWidget {
         return Colors.red;
       default:
         return Colors.green;
-    }
-  }
-
-  Color _getBoltColor(String level) {
-    switch (level) {
-      case 'mild':
-        return Colors.green.shade700;
-      case 'medium':
-        return Colors.orange;
-      case 'spicy':
-        return Colors.red;
-      case 'nuclear':
-        return Colors.red.shade900;
-      default:
-        return Colors.green.shade700;
     }
   }
 
