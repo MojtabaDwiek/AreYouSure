@@ -1,4 +1,4 @@
-import 'package:areyousure/screens/chat_screen.dart';
+import 'package:areyousure/screens/content_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const ChatScreen(),
+      home: const TitleScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

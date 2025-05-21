@@ -1,21 +1,21 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:areyousure/data/insults.dart';
+import 'package:areyousure/data/jokes.dart';
 import 'package:areyousure/models/message.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class ChatJokeScreen extends StatefulWidget {
+  const ChatJokeScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatJokeScreen> createState() => _ChatJokeScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
+class _ChatJokeScreenState extends State<ChatJokeScreen> with SingleTickerProviderStateMixin {
   final List<Message> _messages = [];
-  String _currentLevel = 'mild';
-  final List<String> _roastLevels = ['mild', 'medium', 'spicy', 'nuclear'];
-  late HybridInsultGenerator _insultGenerator;
+  String _currentLevel = 'dad';
+  final List<String> _jokeLevels = ['dad', 'knock-knock', 'one-liner', 'dark'];
+  late JokeGenerator _jokeGenerator;
   final ScrollController _scrollController = ScrollController();
   bool _isDarkMode = true;
   bool _isTyping = false;
@@ -23,21 +23,21 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _insultGenerator = HybridInsultGenerator();
+    _jokeGenerator = JokeGenerator();
   }
 
-  void _addInsult() async {
+  void _addJoke() async {
     setState(() {
       _isTyping = true;
     });
 
     await Future.delayed(const Duration(seconds: 2));
 
-    final insult = _insultGenerator.generateInsult(level: _currentLevel);
+    final joke = _jokeGenerator.generateJoke(level: _currentLevel);
 
     setState(() {
       _messages.add(Message(
-        text: insult,
+        text: joke,
         isUser: false,
         level: _currentLevel,
       ));
@@ -52,12 +52,12 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     );
   }
 
-  void _changeRoastLevel(String? newLevel) {
+  void _changeJokeLevel(String? newLevel) {
     if (newLevel != null) {
       setState(() {
         _currentLevel = newLevel;
         _messages.add(Message(
-          text: "Roast level set to: ${newLevel.toUpperCase()}",
+          text: "Joke style set to: ${newLevel.toUpperCase()}",
           isUser: false,
           level: newLevel,
           isSystem: true,
@@ -76,16 +76,16 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
 
   Color _getLevelColor(String level) {
     switch (level) {
-      case 'mild':
-        return Colors.green;
-      case 'medium':
-        return Colors.yellow;
-      case 'spicy':
+      case 'dad':
         return Colors.orange;
-      case 'nuclear':
-        return Colors.red;
+      case 'knock-knock':
+        return Colors.green;
+      case 'one-liner':
+        return Colors.blue;
+      case 'dark':
+        return Colors.purple;
       default:
-        return Colors.amber;
+        return Colors.grey;
     }
   }
 
@@ -100,11 +100,10 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               Text(
                 'ARE YOU SURE',
                 style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Colors.red, // Changed to red color
-        letterSpacing: 1.5,
-      ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orangeAccent,
+                ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -119,7 +118,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     Switch(
                       value: _isDarkMode,
                       onChanged: (val) => setState(() => _isDarkMode = val),
-                      activeColor:  Colors.red,
+                      activeColor: Colors.orangeAccent,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     Icon(Icons.dark_mode, color: Colors.grey[400], size: 16),
@@ -136,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'INTENSITY: ${_currentLevel.toUpperCase()}',
+                      'STYLE: ${_currentLevel.toUpperCase()}',
                       style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 10,
@@ -145,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
-                      value: (_roastLevels.indexOf(_currentLevel) + 1) / _roastLevels.length,
+                      value: (_jokeLevels.indexOf(_currentLevel) + 1) / _jokeLevels.length,
                       backgroundColor: Colors.grey[800],
                       color: _getLevelColor(_currentLevel),
                       minHeight: 4,
@@ -174,7 +173,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
-                  items: _roastLevels.map((level) {
+                  items: _jokeLevels.map((level) {
                     return DropdownMenuItem<String>(
                       value: level,
                       child: Text(
@@ -187,7 +186,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                       ),
                     );
                   }).toList(),
-                  onChanged: _changeRoastLevel,
+                  onChanged: _changeJokeLevel,
                 ),
               ),
             ],
@@ -202,10 +201,10 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     return Scaffold(
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addInsult,
-        label: const Text('GET ROASTED'),
+        onPressed: _addJoke,
+        label: const Text('TELL ME A JOKE'),
         icon: const Icon(Icons.emoji_emotions),
-        backgroundColor:  Colors.red,
+        backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         elevation: 10,
       ),
@@ -271,26 +270,26 @@ class _BounceMessageState extends State<BounceMessage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _bounceAnimation;
-    double ? _tiltAngle;
+  double? _tiltAngle;
 
   Color _getBackgroundColor(String level) {
     switch (level) {
-      case 'mild':
+      case 'dad':
+        return Colors.orange.withOpacity(0.85);
+      case 'knock-knock':
         return Colors.green.withOpacity(0.85);
-      case 'medium':
-        return Colors.yellow[700]!.withOpacity(0.85);
-      case 'spicy':
-        return Colors.deepOrange.withOpacity(0.9);
-      case 'nuclear':
-        return Colors.red[800]!.withOpacity(0.9);
+      case 'one-liner':
+        return Colors.blue.withOpacity(0.9);
+      case 'dark':
+        return Colors.purple[700]!.withOpacity(0.9);
       default:
-        return Colors.purple[300]!;
+        return Colors.grey;
     }
   }
 
   double _generateRandomTilt() {
     final random = Random();
-    return (random.nextDouble() * 0.08) - 0.04; // -0.04 to 0.04 radians
+    return (random.nextDouble() * 0.08) - 0.04;
   }
 
   @override
@@ -358,7 +357,7 @@ class _BounceMessageState extends State<BounceMessage>
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    fontFamily: 'ComicSans', // or try a custom one like 'LuckiestGuy' or 'Chewy'
+                    fontFamily: 'ComicSans',
                     letterSpacing: 0.5,
                     height: 1.3,
                     shadows: [
@@ -408,7 +407,7 @@ class TypingIndicator extends StatelessWidget {
       onEnd: () {},
       child: const CircleAvatar(
         radius: 4,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.orange,
       ),
     );
   }

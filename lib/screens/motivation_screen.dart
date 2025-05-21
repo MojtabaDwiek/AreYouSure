@@ -1,21 +1,21 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:areyousure/data/insults.dart';
+import 'package:areyousure/data/motivation.dart';
 import 'package:areyousure/models/message.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class ChatMotivationScreen extends StatefulWidget {
+  const ChatMotivationScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatMotivationScreen> createState() => _ChatMotivationScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
+class _ChatMotivationScreenState extends State<ChatMotivationScreen> with SingleTickerProviderStateMixin {
   final List<Message> _messages = [];
-  String _currentLevel = 'mild';
-  final List<String> _roastLevels = ['mild', 'medium', 'spicy', 'nuclear'];
-  late HybridInsultGenerator _insultGenerator;
+  String _currentLevel = 'encouraging';
+  final List<String> _motivationLevels = ['encouraging', 'uplifting', 'inspiring', 'unstoppable'];
+  late MotivationGenerator _motivationGenerator;
   final ScrollController _scrollController = ScrollController();
   bool _isDarkMode = true;
   bool _isTyping = false;
@@ -23,21 +23,21 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _insultGenerator = HybridInsultGenerator();
+    _motivationGenerator = MotivationGenerator();
   }
 
-  void _addInsult() async {
+  void _addMotivation() async {
     setState(() {
       _isTyping = true;
     });
 
     await Future.delayed(const Duration(seconds: 2));
 
-    final insult = _insultGenerator.generateInsult(level: _currentLevel);
+    final quote = _motivationGenerator.generateMotivation(level: _currentLevel);
 
     setState(() {
       _messages.add(Message(
-        text: insult,
+        text: quote,
         isUser: false,
         level: _currentLevel,
       ));
@@ -52,12 +52,12 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     );
   }
 
-  void _changeRoastLevel(String? newLevel) {
+  void _changeMotivationLevel(String? newLevel) {
     if (newLevel != null) {
       setState(() {
         _currentLevel = newLevel;
         _messages.add(Message(
-          text: "Roast level set to: ${newLevel.toUpperCase()}",
+          text: "Motivation level set to: ${newLevel.toUpperCase()}",
           isUser: false,
           level: newLevel,
           isSystem: true,
@@ -76,16 +76,16 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
 
   Color _getLevelColor(String level) {
     switch (level) {
-      case 'mild':
-        return Colors.green;
-      case 'medium':
-        return Colors.yellow;
-      case 'spicy':
-        return Colors.orange;
-      case 'nuclear':
-        return Colors.red;
+      case 'encouraging':
+        return Colors.blue;
+      case 'uplifting':
+        return Colors.teal;
+      case 'inspiring':
+        return Colors.indigo;
+      case 'unstoppable':
+        return Colors.purple;
       default:
-        return Colors.amber;
+        return Colors.grey;
     }
   }
 
@@ -100,11 +100,10 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               Text(
                 'ARE YOU SURE',
                 style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Colors.red, // Changed to red color
-        letterSpacing: 1.5,
-      ),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.tealAccent,
+                ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -119,7 +118,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     Switch(
                       value: _isDarkMode,
                       onChanged: (val) => setState(() => _isDarkMode = val),
-                      activeColor:  Colors.red,
+                      activeColor: Colors.tealAccent,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     Icon(Icons.dark_mode, color: Colors.grey[400], size: 16),
@@ -145,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
-                      value: (_roastLevels.indexOf(_currentLevel) + 1) / _roastLevels.length,
+                      value: (_motivationLevels.indexOf(_currentLevel) + 1) / _motivationLevels.length,
                       backgroundColor: Colors.grey[800],
                       color: _getLevelColor(_currentLevel),
                       minHeight: 4,
@@ -174,7 +173,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
-                  items: _roastLevels.map((level) {
+                  items: _motivationLevels.map((level) {
                     return DropdownMenuItem<String>(
                       value: level,
                       child: Text(
@@ -187,7 +186,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                       ),
                     );
                   }).toList(),
-                  onChanged: _changeRoastLevel,
+                  onChanged: _changeMotivationLevel,
                 ),
               ),
             ],
@@ -202,10 +201,10 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     return Scaffold(
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addInsult,
-        label: const Text('GET ROASTED'),
-        icon: const Icon(Icons.emoji_emotions),
-        backgroundColor:  Colors.red,
+        onPressed: _addMotivation,
+        label: const Text('GET MOTIVATED'),
+        icon: const Icon(Icons.bolt),
+        backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
         elevation: 10,
       ),
@@ -271,26 +270,26 @@ class _BounceMessageState extends State<BounceMessage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _bounceAnimation;
-    double ? _tiltAngle;
+  double? _tiltAngle;
 
   Color _getBackgroundColor(String level) {
     switch (level) {
-      case 'mild':
-        return Colors.green.withOpacity(0.85);
-      case 'medium':
-        return Colors.yellow[700]!.withOpacity(0.85);
-      case 'spicy':
-        return Colors.deepOrange.withOpacity(0.9);
-      case 'nuclear':
-        return Colors.red[800]!.withOpacity(0.9);
+      case 'encouraging':
+        return Colors.blue.withOpacity(0.85);
+      case 'uplifting':
+        return Colors.teal.withOpacity(0.85);
+      case 'inspiring':
+        return Colors.indigo.withOpacity(0.9);
+      case 'unstoppable':
+        return Colors.purple[700]!.withOpacity(0.9);
       default:
-        return Colors.purple[300]!;
+        return Colors.grey;
     }
   }
 
   double _generateRandomTilt() {
     final random = Random();
-    return (random.nextDouble() * 0.08) - 0.04; // -0.04 to 0.04 radians
+    return (random.nextDouble() * 0.08) - 0.04;
   }
 
   @override
@@ -358,7 +357,7 @@ class _BounceMessageState extends State<BounceMessage>
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    fontFamily: 'ComicSans', // or try a custom one like 'LuckiestGuy' or 'Chewy'
+                    fontFamily: 'ComicSans',
                     letterSpacing: 0.5,
                     height: 1.3,
                     shadows: [
@@ -408,7 +407,7 @@ class TypingIndicator extends StatelessWidget {
       onEnd: () {},
       child: const CircleAvatar(
         radius: 4,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.teal,
       ),
     );
   }
