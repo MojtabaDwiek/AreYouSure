@@ -36,7 +36,7 @@ android {
     }
 
     defaultConfig {
-    applicationId "com.dwiekdev.jewel"
+    applicationId "com.dwiekdev.areyousure"
         minSdk flutter.minSdkVersion.toInteger()
         targetSdk flutter.targetSdkVersion.toInteger()
         versionCode flutterVersionCode.toInteger()
