@@ -107,7 +107,7 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen> with SingleTickerPr
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -160,7 +160,7 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen> with SingleTickerPr
                   dropdownColor: Colors.grey[850],
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.black.withOpacity(0.3),
+                    fillColor: Colors.black,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none,
@@ -275,13 +275,13 @@ class _BounceMessageState extends State<BounceMessage>
   Color _getBackgroundColor(String level) {
     switch (level) {
       case 'proverb':
-        return Colors.amber.withOpacity(0.85);
+        return Colors.amber;
       case 'philosophical':
-        return Colors.deepPurple.withOpacity(0.85);
+        return Colors.deepPurple;
       case 'spiritual':
-        return Colors.indigo.withOpacity(0.9);
+        return Colors.indigo;
       case 'enlightened':
-        return Colors.teal.withOpacity(0.9);
+        return Colors.teal;
       default:
         return Colors.grey;
     }
@@ -345,7 +345,7 @@ class _BounceMessageState extends State<BounceMessage>
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black,
                       blurRadius: 6,
                       offset: const Offset(2, 4),
                     ),

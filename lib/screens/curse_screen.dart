@@ -107,7 +107,7 @@ class _ChatCursedScreenState extends State<ChatCursedScreen> with SingleTickerPr
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -160,7 +160,7 @@ class _ChatCursedScreenState extends State<ChatCursedScreen> with SingleTickerPr
                   dropdownColor: Colors.grey[850],
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.black.withOpacity(0.3),
+                    fillColor: Colors.black,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none,
@@ -275,13 +275,13 @@ class _BounceMessageState extends State<BounceMessage>
   Color _getBackgroundColor(String level) {
     switch (level) {
       case 'spooky':
-        return Colors.deepPurple.withOpacity(0.85);
+        return Colors.deepPurple;
       case 'creepy':
-        return Colors.red.withOpacity(0.85);
+        return Colors.red;
       case 'haunting':
-        return Colors.deepOrange.withOpacity(0.9);
+        return Colors.deepOrange;
       case 'eldritch':
-        return Colors.green.withOpacity(0.9);
+        return Colors.green;
       default:
         return Colors.grey;
     }
@@ -345,7 +345,7 @@ class _BounceMessageState extends State<BounceMessage>
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black,
                       blurRadius: 6,
                       offset: const Offset(2, 4),
                     ),

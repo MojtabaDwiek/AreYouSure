@@ -108,7 +108,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -161,7 +161,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                   dropdownColor: Colors.grey[850],
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.black.withOpacity(0.3),
+                    fillColor: Colors.black,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none,
@@ -276,13 +276,13 @@ class _BounceMessageState extends State<BounceMessage>
   Color _getBackgroundColor(String level) {
     switch (level) {
       case 'mild':
-        return Colors.green.withOpacity(0.85);
+        return Colors.green;
       case 'medium':
-        return Colors.yellow[700]!.withOpacity(0.85);
+        return Colors.yellow[700]!;
       case 'spicy':
-        return Colors.deepOrange.withOpacity(0.9);
+        return Colors.deepOrange;
       case 'nuclear':
-        return Colors.red[800]!.withOpacity(0.9);
+        return Colors.red[800]!;
       default:
         return Colors.purple[300]!;
     }
@@ -346,7 +346,7 @@ class _BounceMessageState extends State<BounceMessage>
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black,
                       blurRadius: 6,
                       offset: const Offset(2, 4),
                     ),

@@ -50,13 +50,13 @@ class InsultBubble extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black,
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),
             ],
             border: Border.all(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black,
               width: 1,
             ),
           ),
