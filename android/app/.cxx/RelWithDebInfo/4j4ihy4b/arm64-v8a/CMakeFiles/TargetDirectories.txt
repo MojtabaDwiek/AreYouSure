@@ -1,0 +1,2 @@
+C:/Users/mojtaba/code/front/areyousure/android/app/.cxx/RelWithDebInfo/4j4ihy4b/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/mojtaba/code/front/areyousure/android/app/.cxx/RelWithDebInfo/4j4ihy4b/arm64-v8a/CMakeFiles/rebuild_cache.dir

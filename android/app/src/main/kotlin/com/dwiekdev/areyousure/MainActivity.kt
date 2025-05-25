@@ -1,4 +1,4 @@
-package com.dwiekdev.jewel
+package com.dwiekdev.areyousure
 
 import io.flutter.embedding.android.FlutterActivity
 
