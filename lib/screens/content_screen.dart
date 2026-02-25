@@ -19,34 +19,40 @@ class _TitleScreenState extends State<TitleScreen> {
 
   final List<Map<String, dynamic>> _pages = [
     {
-      'title': 'GET ROASTED',
-      'icon': Icons.local_fire_department,
-      'color': Colors.red,
+      'title': 'HOW WELL DO YOU KNOW ME',
+      'icon': Icons.person_search,
+      'color': Colors.cyan,
       'screen': const ChatScreen(),
     },
     {
-      'title': 'GET MOTIVATED',
-      'icon': Icons.bolt,
-      'color': Colors.teal,
+      'title': 'NEVER HAVE I EVER',
+      'icon': Icons.block,
+      'color': Colors.pink,
       'screen': const ChatMotivationScreen(),
     },
     {
-      'title': 'GET JOKES',
-      'icon': Icons.emoji_emotions,
+      'title': 'MOST LIKELY TO',
+      'icon': Icons.groups,
       'color': Colors.orange,
       'screen': const ChatJokeScreen(),
     },
     {
-      'title': 'GET WISDOM',
-      'icon': Icons.lightbulb,
-      'color': Colors.amber,
+      'title': 'TRUTH OR DARE',
+      'icon': Icons.casino,
+      'color': Colors.redAccent,
       'screen': const ChatWisdomScreen(),
     },
     {
-      'title': 'GET CURSED',
-      'icon': Icons.warning,
-      'color': Colors.deepPurple,
+      'title': 'THIS OR THAT',
+      'icon': Icons.compare_arrows,
+      'color': Colors.green,
       'screen': const ChatCursedScreen(),
+    },
+    {
+      'title': 'FINISH THE SENTENCE',
+      'icon': Icons.edit_note,
+      'color': Colors.blueAccent,
+      'screen': const _FinishSentencePlaceholderScreen(),
     },
   ];
 
@@ -111,7 +117,7 @@ class _TitleScreenState extends State<TitleScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                'CHOOSE YOUR EXPERIENCE',
+                'CHOOSE YOUR GAME MODE',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -187,6 +193,7 @@ class _TitleScreenState extends State<TitleScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: _pages[actualIndex]['color'],
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ],
@@ -200,6 +207,31 @@ class _TitleScreenState extends State<TitleScreen> {
             ),
             const SizedBox(height: 40),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FinishSentencePlaceholderScreen extends StatelessWidget {
+  const _FinishSentencePlaceholderScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[900],
+      appBar: AppBar(
+        title: const Text('Finish the Sentence'),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            'Finish the Sentence mode is ready in data.\nScreen wiring can be added next.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
         ),
       ),
     );

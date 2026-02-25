@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:areyousure/data/motivation.dart';
 import 'package:areyousure/models/message.dart';
+import 'package:flutter/material.dart';
 
 class ChatMotivationScreen extends StatefulWidget {
   const ChatMotivationScreen({super.key});
@@ -11,10 +11,9 @@ class ChatMotivationScreen extends StatefulWidget {
   State<ChatMotivationScreen> createState() => _ChatMotivationScreenState();
 }
 
-class _ChatMotivationScreenState extends State<ChatMotivationScreen> with SingleTickerProviderStateMixin {
+class _ChatMotivationScreenState extends State<ChatMotivationScreen>
+    with SingleTickerProviderStateMixin {
   final List<Message> _messages = [];
-  String _currentLevel = 'encouraging';
-  final List<String> _motivationLevels = ['encouraging', 'uplifting', 'inspiring', 'unstoppable'];
   late MotivationGenerator _motivationGenerator;
   final ScrollController _scrollController = ScrollController();
   bool _isDarkMode = true;
@@ -26,25 +25,22 @@ class _ChatMotivationScreenState extends State<ChatMotivationScreen> with Single
     _motivationGenerator = MotivationGenerator();
   }
 
-  void _addMotivation() async {
+  Future<void> _addQuestion() async {
     setState(() {
       _isTyping = true;
     });
 
     await Future.delayed(const Duration(seconds: 2));
 
-    final quote = _motivationGenerator.generateMotivation(level: _currentLevel);
+    final question = _motivationGenerator.generateMotivation();
 
     setState(() {
-      _messages.add(Message(
-        text: quote,
-        isUser: false,
-        level: _currentLevel,
-      ));
+      _messages.add(Message(text: question, isUser: false));
       _isTyping = false;
     });
 
     await Future.delayed(const Duration(milliseconds: 100));
+    if (!_scrollController.hasClients) return;
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
       duration: const Duration(milliseconds: 400),
@@ -52,144 +48,39 @@ class _ChatMotivationScreenState extends State<ChatMotivationScreen> with Single
     );
   }
 
-  void _changeMotivationLevel(String? newLevel) {
-    if (newLevel != null) {
-      setState(() {
-        _currentLevel = newLevel;
-        _messages.add(Message(
-          text: "Motivation level set to: ${newLevel.toUpperCase()}",
-          isUser: false,
-          level: newLevel,
-          isSystem: true,
-        ));
-      });
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOut,
-        );
-      });
-    }
-  }
-
-  Color _getLevelColor(String level) {
-    switch (level) {
-      case 'encouraging':
-        return Colors.blue;
-      case 'uplifting':
-        return Colors.teal;
-      case 'inspiring':
-        return Colors.indigo;
-      case 'unstoppable':
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
-  }
-
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'ARE YOU SURE',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.tealAccent,
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.light_mode, color: Colors.grey[400], size: 16),
-                    Switch(
-                      value: _isDarkMode,
-                      onChanged: (val) => setState(() => _isDarkMode = val),
-                      activeColor: Colors.tealAccent,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    Icon(Icons.dark_mode, color: Colors.grey[400], size: 16),
-                  ],
-                ),
-              ),
-            ],
+          const Text(
+            'NEVER HAVE I EVER',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.pinkAccent,
+            ),
           ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'INTENSITY: ${_currentLevel.toUpperCase()}',
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    LinearProgressIndicator(
-                      value: (_motivationLevels.indexOf(_currentLevel) + 1) / _motivationLevels.length,
-                      backgroundColor: Colors.grey[800],
-                      color: _getLevelColor(_currentLevel),
-                      minHeight: 4,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ],
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.light_mode, color: Colors.grey[400], size: 16),
+                Switch(
+                  value: _isDarkMode,
+                  onChanged: (val) => setState(() => _isDarkMode = val),
+                  activeColor: Colors.pinkAccent,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _currentLevel,
-                  dropdownColor: Colors.grey[850],
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.black,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white, size: 16),
-                  style: TextStyle(
-                    color: _getLevelColor(_currentLevel),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  items: _motivationLevels.map((level) {
-                    return DropdownMenuItem<String>(
-                      value: level,
-                      child: Text(
-                        level.toUpperCase(),
-                        style: TextStyle(
-                          color: _getLevelColor(level),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: _changeMotivationLevel,
-                ),
-              ),
-            ],
+                Icon(Icons.dark_mode, color: Colors.grey[400], size: 16),
+              ],
+            ),
           ),
         ],
       ),
@@ -197,14 +88,20 @@ class _ChatMotivationScreenState extends State<ChatMotivationScreen> with Single
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addMotivation,
-        label: const Text('GET MOTIVATED'),
-        icon: const Icon(Icons.bolt),
-        backgroundColor: Colors.teal,
+        onPressed: _addQuestion,
+        label: const Text('NEXT QUESTION'),
+        icon: const Icon(Icons.chat_bubble_outline),
+        backgroundColor: Colors.pink,
         foregroundColor: Colors.white,
         elevation: 10,
       ),
@@ -236,11 +133,7 @@ class _ChatMotivationScreenState extends State<ChatMotivationScreen> with Single
                         child: TypingIndicator(),
                       );
                     }
-                    final message = _messages[index];
-                    return BounceMessage(
-                      message: message,
-                      level: message.level ?? '',
-                    );
+                    return BounceMessage(message: _messages[index]);
                   },
                 ),
               ),
@@ -254,12 +147,10 @@ class _ChatMotivationScreenState extends State<ChatMotivationScreen> with Single
 
 class BounceMessage extends StatefulWidget {
   final Message message;
-  final String level;
 
   const BounceMessage({
     super.key,
     required this.message,
-    required this.level,
   });
 
   @override
@@ -271,21 +162,6 @@ class _BounceMessageState extends State<BounceMessage>
   late AnimationController _controller;
   late Animation<double> _bounceAnimation;
   double? _tiltAngle;
-
-  Color _getBackgroundColor(String level) {
-    switch (level) {
-      case 'encouraging':
-        return Colors.blue;
-      case 'uplifting':
-        return Colors.teal;
-      case 'inspiring':
-        return Colors.indigo;
-      case 'unstoppable':
-        return Colors.purple[700]!;
-      default:
-        return Colors.grey;
-    }
-  }
 
   double _generateRandomTilt() {
     final random = Random();
@@ -306,12 +182,7 @@ class _BounceMessageState extends State<BounceMessage>
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.2), weight: 50),
       TweenSequenceItem(tween: Tween(begin: 1.2, end: 0.9), weight: 20),
       TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.0), weight: 30),
-    ]).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOut,
-      ),
-    );
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
   }
@@ -324,8 +195,6 @@ class _BounceMessageState extends State<BounceMessage>
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = _getBackgroundColor(widget.level);
-
     return AnimatedBuilder(
       animation: _bounceAnimation,
       builder: (context, child) {
@@ -341,13 +210,13 @@ class _BounceMessageState extends State<BounceMessage>
                 padding: const EdgeInsets.all(16),
                 margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 decoration: BoxDecoration(
-                  color: bgColor,
+                  color: Colors.pink,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black,
                       blurRadius: 6,
-                      offset: const Offset(2, 4),
+                      offset: Offset(2, 4),
                     ),
                   ],
                 ),
@@ -357,16 +226,8 @@ class _BounceMessageState extends State<BounceMessage>
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    fontFamily: 'ComicSans',
                     letterSpacing: 0.5,
                     height: 1.3,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 2,
-                        color: Colors.black26,
-                        offset: Offset(1, 1),
-                      )
-                    ],
                   ),
                 ),
               ),
@@ -388,27 +249,17 @@ class TypingIndicator extends StatelessWidget {
       children: [
         _dot(),
         const SizedBox(width: 4),
-        _dot(delay: 200),
+        _dot(),
         const SizedBox(width: 4),
-        _dot(delay: 400),
+        _dot(),
       ],
     );
   }
 
-  Widget _dot({int delay = 0}) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      builder: (context, value, child) => Opacity(
-        opacity: value,
-        child: child,
-      ),
-      onEnd: () {},
-      child: const CircleAvatar(
-        radius: 4,
-        backgroundColor: Colors.teal,
-      ),
+  Widget _dot() {
+    return const CircleAvatar(
+      radius: 4,
+      backgroundColor: Colors.pink,
     );
   }
 }

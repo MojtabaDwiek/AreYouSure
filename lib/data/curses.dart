@@ -1,320 +1,125 @@
 import 'dart:math';
 
 class CurseGenerator {
-  final Map<String, List<String>> _templates = {
-    'spooky': [
-      "The {adjective} {noun} will {verb} you under the {noun}.",
-      "You can't escape the {adjective} curse of the {noun} that {verb}s.",
-      "When the clock strikes midnight, the {noun} begins to {verb} in {adjective} whispers.",
-      "Beware the {adjective} {noun} that {verb}s at your window.",
-      "Once you hear the {noun}, your soul will {verb} with {adjective} dread.",
-      "A {adjective} breeze brings the {noun} that loves to {verb}.",
-      "The {noun} that {verb}s thrice summons a {adjective} fate.",
-      "Whispers of the {adjective} {noun} will make you {verb} in fear.",
-      "Every {adjective} {noun} knows how to {verb} your dreams.",
-      "You'll {verb} forever, haunted by the {adjective} {noun}.",
-      "The {adjective} {noun} lurks in corners, waiting to {verb}.",
-      "Your shadow isn't yours—it's the {adjective} {noun} that {verb}s.",
-      "No light can save you from the {adjective} {noun} that {verb}s.",
-      "The {noun} under your bed hungers for {adjective} {verb}ing.",
-      "A {adjective} presence makes the {noun} {verb} uncontrollably.",
-      "The {adjective} {noun} writes your name before you {verb}.",
-      "When you {verb}, the {adjective} {noun} comes closer.",
-      "Your breath turns to mist as the {adjective} {noun} {verb}s.",
-      "The {adjective} {noun} only {verb}s when you're not looking.",
-      "Your reflection {verb}s differently in the {adjective} {noun}'s gaze.",
-      "The {adjective} {noun} marks its prey before they {verb}.",
-      "Your heartbeat syncs with the {adjective} {noun}'s {verb}ing.",
-      "The {adjective} {noun} {verb}s your name in empty rooms.",
-      "Every step you take makes the {adjective} {noun} {verb} louder.",
-      "The {adjective} {noun} {verb}s where children once played.",
-      "Your sanity unravels as the {adjective} {noun} {verb}s.",
-      "The {adjective} {noun} {verb}s in patterns only the dead understand.",
-      "Your last thought will be of the {adjective} {noun} {verb}ing.",
-      "The {adjective} {noun} {verb}s in time with your nightmares.",
-      "No prayer stops the {adjective} {noun} from {verb}ing.",
-      "The {adjective} {noun} remembers how you {verb}ed.",
-      "Your fear feeds the {adjective} {noun}'s {verb}ing.",
-      "The {adjective} {noun} {verb}s where shadows are deepest.",
-      "Your voice becomes the {adjective} {noun}'s {verb}.",
-      "The {adjective} {noun} {verb}s beneath the floorboards.",
-      "Your name fades as the {adjective} {noun} {verb}s it away.",
-      "The {adjective} {noun} {verb}s where no light remains.",
-      "Your memories twist into the {adjective} {noun}'s {verb}ing.",
-      "The {adjective} {noun} {verb}s in languages never spoken.",
-      "Your fate is sealed when the {adjective} {noun} {verb}s.",
-    ],
-    'creepy': [
-      "The {noun} that {verb}s under your bed is far too {adjective} to ignore.",
-      "In the {adjective} silence, a {noun} begins to {verb}.",
-      "A {adjective} {noun} followed you home and now it {verb}s.",
-      "Your {noun} is not yours anymore—it's been {verb}ed by something {adjective}.",
-      "A {adjective} giggle and a {noun} that {verb}s—it's already inside.",
-      "Don't {verb} in the dark or the {adjective} {noun} will see you.",
-      "Something {adjective} is hiding in your {noun}, waiting to {verb}.",
-      "When the lights flicker, the {adjective} {noun} {verb}s again.",
-      "You locked the door, but the {noun} that {verb}s is still in.",
-      "The {adjective} {noun} whispers your name to make you {verb}.",
-      "Your {noun} isn't where you left it—the {adjective} thing {verb}ed it.",
-      "The {adjective} {noun} only {verb}s when you're alone.",
-      "Your skin crawls where the {adjective} {noun} {verb}ed.",
-      "The {adjective} {noun} learns how to {verb} by watching you.",
-      "Your {noun} moves on its own when the {adjective} presence {verb}s.",
-      "The {adjective} {noun} {verb}s in patterns that shouldn't exist.",
-      "You wake to find the {adjective} {noun} has been {verb}ing.",
-      "Your reflection {verb}s differently in the {adjective} {noun}'s eyes.",
-      "The {adjective} {noun} leaves marks where it {verb}s.",
-      "Your breath fogs the glass as the {adjective} {noun} {verb}s behind you.",
-      "The {adjective} {noun} mimics voices to make you {verb}.",
-      "Your shadow {verb}s independently of the {adjective} {noun}.",
-      "The {adjective} {noun} {verb}s in your peripheral vision.",
-      "Your name sounds wrong when the {adjective} {noun} {verb}s it.",
-      "The {adjective} {noun} {verb}s where you just were.",
-      "Your footsteps echo after the {adjective} {noun} {verb}s.",
-      "The {adjective} {noun} {verb}s in time with your pulse.",
-      "Your hands shake as the {adjective} {noun} {verb}s nearer.",
-      "The {adjective} {noun} {verb}s where the walls are thin.",
-      "Your voice cracks calling out to the {adjective} {noun} {verb}ing.",
-      "The {adjective} {noun} {verb}s beneath your skin.",
-      "Your bones ache when the {adjective} {noun} {verb}s.",
-      "The {adjective} {noun} {verb}s in abandoned places.",
-      "Your teeth chatter as the {adjective} {noun} {verb}s closer.",
-      "The {adjective} {noun} {verb}s where children disappear.",
-      "Your hair stands up when the {adjective} {noun} {verb}s.",
-      "The {adjective} {noun} {verb}s in photographs.",
-      "Your pulse races as the {adjective} {noun} {verb}s your name.",
-      "The {adjective} {noun} {verb}s where animals won't go.",
-      "Your blood runs cold at the {adjective} {noun}'s {verb}ing.",
-    ],
-    'haunting': [
-      "The {adjective} {noun} that {verb}ed you will never leave.",
-      "You'll hear the {noun} {verb} every night until you're {adjective} too.",
-      "No matter where you go, the {adjective} {noun} will {verb} beside you.",
-      "The mirror holds a {noun} that {verb}s only when you're {adjective}.",
-      "The {noun} that {verb}s your name is more {adjective} than death.",
-      "It left a mark. The {adjective} {noun} now knows how to {verb}.",
-      "The {noun} you forgot now {verb}s in your {adjective} dreams.",
-      "Once touched by the {adjective} {noun}, you begin to {verb} too.",
-      "You'll {verb} through eternity, hunted by the {adjective} {noun}.",
-      "Even silence {verb}s with the weight of that {adjective} {noun}.",
-      "The {adjective} {noun} {verb}s the names of those who'll join it.",
-      "Your {noun} becomes {adjective} after the {verb}ing starts.",
-      "The {adjective} {noun} {verb}s where lovers once whispered.",
-      "You can't {verb} without the {adjective} {noun} knowing.",
-      "The {adjective} {noun} {verb}s in empty houses at dawn.",
-      "Your tears feed the {adjective} {noun}'s {verb}ing.",
-      "The {adjective} {noun} {verb}s where the dead walked.",
-      "You inherit the {adjective} {noun} when you {verb} too much.",
-      "The {adjective} {noun} {verb}s in family portraits.",
-      "Your childhood home remembers the {adjective} {noun} {verb}ing.",
-      "The {adjective} {noun} {verb}s where promises were broken.",
-      "Your voice joins the {adjective} {noun}'s {verb}ing chorus.",
-      "The {adjective} {noun} {verb}s beneath wedding rings.",
-      "Your hands remember how the {adjective} {noun} {verb}ed.",
-      "The {adjective} {noun} {verb}s in attics and crawlspaces.",
-      "Your name appears where the {adjective} {noun} {verb}ed.",
-      "The {adjective} {noun} {verb}s in hospital corridors.",
-      "Your breath fades as the {adjective} {noun} {verb}s it away.",
-      "The {adjective} {noun} {verb}s beneath church pews.",
-      "Your reflection ages with the {adjective} {noun}'s {verb}ing.",
-      "The {adjective} {noun} {verb}s where soldiers fell.",
-      "Your heartbeat syncs with the {adjective} {noun}'s {verb}ing.",
-      "The {adjective} {noun} {verb}s in abandoned nurseries.",
-      "Your skin remembers the {adjective} {noun}'s {verb}ing touch.",
-      "The {adjective} {noun} {verb}s where no flowers grow.",
-      "Your voice cracks calling the {adjective} {noun}'s name.",
-      "The {adjective} {noun} {verb}s where the earth is disturbed.",
-      "Your shadow belongs to the {adjective} {noun} now.",
-      "The {adjective} {noun} {verb}s where the river runs deep.",
-      "Your bones remember the {adjective} {noun}'s {verb}ing.",
-    ],
-    'eldritch': [
-      "The {adjective} {noun} from beyond the veil begins to {verb}.",
-      "You can't {verb} what the {adjective} {noun} has already consumed.",
-      "The sky cracked, and a {noun} too {adjective} to name began to {verb}.",
-      "Eyes where none should be, the {adjective} {noun} {verb}s.",
-      "Your reality {verb}s around the presence of the {adjective} {noun}.",
-      "When the stars align, the {noun} shall {verb} in {adjective} madness.",
-      "A {adjective} chant beckons the {noun} that {verb}s inside your soul.",
-      "The {noun} that {verb}s through time is horribly {adjective}.",
-      "Every time you sleep, the {adjective} {noun} begins to {verb} again.",
-      "Existence is a lie whispered by the {adjective} {noun} that {verb}s the void.",
-      "The {adjective} {noun} {verb}s in angles that shouldn't exist.",
-      "Your mind fractures as the {adjective} {noun} {verb}s its truth.",
-      "The {adjective} {noun} {verb}s where geometry breaks down.",
-      "You glimpse the {adjective} {noun} when you {verb} too deeply.",
-      "The {adjective} {noun} {verb}s in the spaces between atoms.",
-      "Your sanity unravels as the {adjective} {noun} {verb}s its name.",
-      "The {adjective} {noun} {verb}s where time has no meaning.",
-      "You become the {adjective} {noun} when you {verb} the ritual.",
-      "The {adjective} {noun} {verb}s in colors not meant for eyes.",
-      "Your flesh remembers the {adjective} {noun}'s {verb}ing touch.",
-      "The {adjective} {noun} {verb}s where dimensions thin.",
-      "You hear the {adjective} {noun} {verb} in your bones.",
-      "The {adjective} {noun} {verb}s in the static between stations.",
-      "Your dreams become the {adjective} {noun}'s {verb}ing ground.",
-      "The {adjective} {noun} {verb}s where mathematics fails.",
-      "You taste the {adjective} {noun} when you {verb} in fear.",
-      "The {adjective} {noun} {verb}s in the back of every mind.",
-      "Your reflection shows the {adjective} {noun} {verb}ing behind you.",
-      "The {adjective} {noun} {verb}s where light cannot escape.",
-      "You smell the {adjective} {noun} before it {verb}s into being.",
-      "The {adjective} {noun} {verb}s in the cracks of the world.",
-      "Your voice becomes the {adjective} {noun}'s {verb}ing instrument.",
-      "The {adjective} {noun} {verb}s where gods fear to look.",
-      "You feel the {adjective} {noun} {verb} in your DNA.",
-      "The {adjective} {noun} {verb}s where parallel worlds intersect.",
-      "Your shadow belongs to the {adjective} {noun} now.",
-      "The {adjective} {noun} {verb}s in the static of dead channels.",
-      "You hear the {adjective} {noun} {verb} in your childhood memories.",
-      "The {adjective} {noun} {verb}s where all possibilities end.",
-      "Your last thought is the {adjective} {noun}'s {verb}ing laughter.",
-    ],
-  };
-
-  final Map<String, List<String>> _adjectives = {
-    'spooky': [
-      'eerie', 'ghostly', 'bone-chilling', 'unnerving', 'cursed', 
-      'hollow', 'whispering', 'foggy', 'dusky', 'ominous',
-      'shivering', 'spectral', 'waning', 'moonlit', 'chilling',
-      'dreadful', 'haunted', 'sepulchral', 'nocturnal', 'eldritch',
-      'gloomy', 'shadowed', 'creeping', 'waning', 'phantom',
-      'deathly', 'ghastly', 'macabre', 'funereal', 'twilight',
-      'shuddering', 'grisly', 'pale', 'wan', 'ashen',
-      'specter-filled', 'dank', 'miasmic', 'sepulchral', 'grave-cold'
-    ],
-    'creepy': [
-      'disturbing', 'unsettling', 'weird', 'gross', 'sinister', 
-      'glaring', 'silent', 'crawling', 'twisted', 'pale',
-      'leering', 'sickly', 'off-putting', 'wrong', 'malformed',
-      'unnatural', 'slick', 'glistening', 'too-many', 'not-right',
-      'skittering', 'twitching', 'jerky', 'wrong-angle', 'off-kilter',
-      'breathless', 'hungry-eyed', 'too-close', 'sticky', 'clammy',
-      'unblinking', 'too-smooth', 'wrong-teethed', 'pulsing', 'veiny',
-      'bulbous', 'too-warm', 'too-cold', 'wrong-jointed', 'not-human'
-    ],
-    'haunting': [
-      'eternal', 'sad', 'tormented', 'forsaken', 'wailing', 
-      'mourning', 'broken', 'lonely', 'faded', 'anguished',
-      'weeping', 'lost', 'regretful', 'aching', 'hollow-eyed',
-      'sorrowful', 'grief-stricken', 'waning', 'pining', 'heartbroken',
-      'ghostly', 'lingering', 'unfinished', 'unavenged', 'restless',
-      'tear-stained', 'memory-haunted', 'love-lost', 'betrayed', 'forgotten',
-      'aching', 'empty', 'echoing', 'faint', 'whispered',
-      'time-worn', 'weather-beaten', 'crumbling', 'dust-covered', 'name-scratched'
-    ],
-    'eldritch': [
-      'unnameable', 'cosmic', 'mad', 'tentacled', 'insane', 
-      'ancient', 'shapeless', 'alien', 'warped', 'incomprehensible',
-      'multi-eyed', 'non-euclidean', 'geometry-breaking', 'time-warping', 'space-folding',
-      'dimension-bleeding', 'reality-tearing', 'mind-shattering', 'sanity-rending', 'void-born',
-      'star-spawned', 'abyssal', 'primordial', 'cyclopean', 'ichor-dripping',
-      'sigil-carved', 'rune-etched', 'forbidden', 'blasphemous', 'apocryphal',
-      'time-lost', 'space-twisting', 'angle-wrong', 'fractal-born', 'infinity-eyed',
-      'void-whispering', 'dimension-hopping', 'reality-shifting', 'unfathomable', 'outer'
-    ],
-  };
-
-  final Map<String, List<String>> _nouns = {
-    'spooky': [
-      'ghost', 'spirit', 'breeze', 'shadow', 'floorboard', 
-      'lantern', 'owl', 'fog', 'whisper', 'figure',
-      'apparition', 'wraith', 'specter', 'phantom', 'shade',
-      'gravestone', 'tombstone', 'mausoleum', 'crypt', 'coffin',
-      'raven', 'bat', 'wolf', 'howl', 'moan',
-      'sigh', 'footstep', 'knock', 'scratch', 'breath',
-      'veil', 'curtain', 'mirror', 'portrait', 'doll',
-      'candle', 'flame', 'ember', 'ash', 'dust'
-    ],
-    'creepy': [
-      'doll', 'clown', 'reflection', 'basement', 'crawlspace', 
-      'tap', 'mirror', 'knock', 'scream', 'closet',
-      'mannequin', 'puppet', 'mask', 'statue', 'painting',
-      'attic', 'tunnel', 'well', 'cellar', 'furnace',
-      'breathing', 'laughter', 'whimper', 'giggle', 'shushing',
-      'hand', 'face', 'smile', 'teeth', 'eyes',
-      'skin', 'hair', 'fingers', 'tongue', 'voice'
-    ],
-    'haunting': [
-      'soul', 'cry', 'grave', 'voice', 'dream', 
-      'mourner', 'chain', 'portrait', 'curse', 'echo',
-      'memory', 'regret', 'tear', 'sigh', 'lament',
-      'wail', 'keening', 'funeral', 'wreath', 'epitaph',
-      'ring', 'locket', 'letter', 'diary', 'photograph',
-      'candle', 'flower', 'rosary', 'hymn', 'prayer',
-      'child', 'bride', 'soldier', 'mother', 'lover'
-    ],
-    'eldritch': [
-      'thing', 'god', 'entity', 'abomination', 'sigil', 
-      'mind', 'void', 'horror', 'cult', 'form',
-      'tendril', 'eye', 'mouth', 'appendage', 'pseudopod',
-      'geometry', 'angle', 'fractal', 'non-space', 'between-place',
-      'chant', 'ritual', 'sacrifice', 'offering', 'altar',
-      'tome', 'glyph', 'rune', 'symbol', 'incantation',
-      'star', 'gate', 'portal', 'shard', 'fragment'
-    ],
-  };
-
-  final Map<String, List<String>> _verbs = {
-    'spooky': [
-      'whisper', 'float', 'glide', 'rattle', 'shiver', 
-      'hide', 'appear', 'linger', 'fade', 'hover',
-      'moan', 'sigh', 'creak', 'groan', 'scuttle',
-      'tap', 'scratch', 'knock', 'breath', 'murmur',
-      'materialize', 'dissolve', 'wail', 'howl', 'screech',
-      'beckon', 'point', 'watch', 'follow', 'grasp',
-      'dim', 'flicker', 'extinguish', 'reappear', 'vanish'
-    ],
-    'creepy': [
-      'crawl', 'blink', 'giggle', 'tap', 'watch', 
-      'breathe', 'stare', 'move', 'wait', 'drag',
-      'twitch', 'jerk', 'spasm', 'contort', 'distort',
-      'melt', 'reform', 'split', 'multiply', 'ooze',
-      'unfold', 'unhinge', 'elongate', 'stretch', 'snap',
-      'lick', 'chew', 'gnaw', 'suck', 'pulse'
-    ],
-    'haunting': [
-      'weep', 'moan', 'follow', 'linger', 'scream', 
-      'hover', 'curse', 'groan', 'appear', 'sink',
-      'replay', 'relive', 'remember', 'regret', 'mourn',
-      'wander', 'search', 'call', 'wait', 'return',
-      'haunt', 'possess', 'inhabit', 'attach', 'cling',
-      'fade', 'diminish', 'wither', 'decay', 'crumble'
-    ],
-    'eldritch': [
-      'shift', 'warp', 'consume', 'fracture', 'melt', 
-      'pulse', 'echo', 'distort', 'collapse', 'bleed',
-      'unmake', 'rewrite', 'transmute', 'transfigure', 'mutate',
-      'unfold', 'invade', 'infest', 'corrupt', 'taint',
-      'screech', 'chitter', 'vocalize', 'resonate', 'vibrate',
-      'exist', 'not-exist', 'become', 'unbecome', 'cycle'
-    ],
-  };
+  final List<String> _questions = const [
+    'This or That: beach vacation or mountain getaway?',
+    'This or That: coffee or tea?',
+    'This or That: early bird or night owl?',
+    'This or That: city life or countryside life?',
+    'This or That: sweet snacks or salty snacks?',
+    'This or That: books or podcasts?',
+    'This or That: movies at home or cinema night?',
+    'This or That: Android or iOS?',
+    'This or That: loyalty or honesty?',
+    'This or That: stability or adventure?',
+    'This or That: plan everything or go with the flow?',
+    'This or That: deep talks or fun chaos?',
+    'This or That: summer or winter?',
+    'This or That: texting or calling?',
+    'This or That: sneakers or sandals?',
+    'This or That: pizza or burger?',
+    'This or That: morning workout or evening workout?',
+    'This or That: comedy or thriller?',
+    'This or That: introvert night or extrovert night?',
+    'This or That: online shopping or in-store shopping?',
+    'This or That: tea with sugar or no sugar?',
+    'This or That: big party or small gathering?',
+    'This or That: cats or dogs?',
+    'This or That: sweet breakfast or savory breakfast?',
+    'This or That: mountains or ocean?',
+    'This or That: fame or peace?',
+    'This or That: rich life or simple life?',
+    'This or That: music festival or road trip?',
+    'This or That: strict routine or flexible routine?',
+    'This or That: home cooking or takeaway?',
+    'This or That: sunrise or sunset?',
+    'This or That: rainy days or sunny days?',
+    'This or That: headphones or speakers?',
+    'This or That: notebooks or digital notes?',
+    'This or That: tea at night or coffee in the morning?',
+    'This or That: sneakers or boots?',
+    'This or That: long drive or short flight?',
+    'This or That: spicy food or mild food?',
+    'This or That: window seat or aisle seat?',
+    'This or That: beach walk or city walk?',
+    'This or That: live concert or house party?',
+    'This or That: action movies or documentaries?',
+    'This or That: iPad or laptop?',
+    'This or That: voice notes or typed messages?',
+    'This or That: tea shop or coffee shop?',
+    'This or That: startup life or corporate life?',
+    'This or That: staying in or going out?',
+    'This or That: group trip or solo trip?',
+    'This or That: planned day or spontaneous day?',
+    'This or That: reading fiction or non-fiction?',
+    'This or That: first move or wait for them to text first?',
+    'This or That: cute nickname or full name?',
+    'This or That: hand holding or forehead kiss?',
+    'This or That: late-night chat or morning good morning text?',
+    'This or That: soft romance or chaotic romance?',
+    'This or That: playful teasing or sweet compliments?',
+    'This or That: secret crush or public crush?',
+    'This or That: slow burn or instant spark?',
+    'This or That: matching outfits or matching playlists?',
+    'This or That: dinner date or coffee date?',
+    'This or That: flirty banter or deep conversation?',
+    'This or That: \"good morning\" text or \"good night\" text?',
+    'This or That: public compliments or private compliments?',
+    'This or That: first date walk or first date dinner?',
+    'This or That: playful teasing or straightforward flirting?',
+    'This or That: surprise flowers or surprise food?',
+    'This or That: movie date or arcade date?',
+    'This or That: voice note confession or text confession?',
+    'This or That: cute chaos or calm romance?',
+    'This or That: eye contact or shy smile?',
+    'This or That: instant chemistry or slow connection?',
+    'This or That: matching lockscreen or matching bracelets?',
+    'This or That: one big gesture or many small gestures?',
+    'This or That: secret crush or obvious crush?',
+    'This or That: long hugs or hand holding?',
+    'This or That: sweet nickname or playful nickname?',
+    'This or That: spontaneous date or planned date?',
+    'This or That: rooftop date or beach date?',
+    'This or That: bold first move or subtle hints?',
+    'This or That: texts all day or one deep late-night call?',
+    'This or That: dramatic love story or peaceful love story?',
+    'This or That: cute selfies together or candid photos?',
+    'This or That: gifting snacks or gifting notes?',
+    'This or That: funny partner or romantic partner?',
+    'This or That: protective vibe or chill vibe?',
+  ];
 
   final Random _random = Random();
+  late final List<String> _allQuestions = [
+    ..._questions,
+    ..._buildBonusQuestions(),
+  ];
+
+  List<String> _buildBonusQuestions() {
+    final templates = [
+      'This or That for {topic}: speed or quality?',
+      'This or That for {topic}: safe choice or risky choice?',
+      'This or That for {topic}: solo style or team style?',
+      'This or That for {topic}: budget option or premium option?',
+      'This or That for {topic}: classic route or new route?',
+      'This or That for {topic}: morning plan or night plan?',
+      'This or That for {topic}: logic first or feelings first?',
+      'This or That for {topic}: short-term gain or long-term gain?',
+      'This or That for {topic}: structured plan or free flow?',
+      'This or That for {topic}: quiet mode or high-energy mode?',
+    ];
+    final topics = ['study', 'travel', 'fitness', 'career', 'relationships'];
+    final result = <String>[];
+    for (final topic in topics) {
+      for (final template in templates) {
+        result.add(template.replaceAll('{topic}', topic));
+      }
+    }
+    return result;
+  }
 
   String generateCurse({String level = 'spooky'}) {
-    final templates = _templates[level] ?? _templates['spooky']!;
-    final template = templates[_random.nextInt(templates.length)];
-
-    return template
-        .replaceAll('{adjective}', _getRandomAdjective(level))
-        .replaceAll('{noun}', _getRandomNoun(level))
-        .replaceAll('{verb}', _getRandomVerb(level));
-  }
-
-  String _getRandomAdjective(String level) {
-    final adjectives = _adjectives[level] ?? _adjectives['spooky']!;
-    return adjectives[_random.nextInt(adjectives.length)];
-  }
-
-  String _getRandomNoun(String level) {
-    final nouns = _nouns[level] ?? _nouns['spooky']!;
-    return nouns[_random.nextInt(nouns.length)];
-  }
-
-  String _getRandomVerb(String level) {
-    final verbs = _verbs[level] ?? _verbs['spooky']!;
-    return verbs[_random.nextInt(verbs.length)];
+    return _allQuestions[_random.nextInt(_allQuestions.length)];
   }
 }
+
