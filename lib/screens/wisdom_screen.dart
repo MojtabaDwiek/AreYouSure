@@ -18,6 +18,7 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
   final ScrollController _scrollController = ScrollController();
   bool _isDarkMode = true;
   bool _isTyping = false;
+  String _pendingType = 'QUESTION';
 
   @override
   void initState() {
@@ -25,14 +26,17 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
     _wisdomGenerator = WisdomGenerator();
   }
 
-  Future<void> _addQuestion() async {
+  Future<void> _addQuestion(String type) async {
     setState(() {
       _isTyping = true;
+      _pendingType = type;
     });
 
     await Future.delayed(const Duration(seconds: 2));
 
-    final question = _wisdomGenerator.generateWisdom();
+    final question = type == 'TRUTH'
+        ? _wisdomGenerator.generateTruth()
+        : _wisdomGenerator.generateDare();
 
     setState(() {
       _messages.add(Message(text: question, isUser: false));
@@ -97,15 +101,46 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addQuestion,
-        label: const Text('NEXT QUESTION'),
-        icon: const Icon(Icons.chat_bubble_outline),
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
-        elevation: 10,
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _isTyping ? null : () => _addQuestion('TRUTH'),
+                icon: const Icon(Icons.visibility),
+                label: const Text('TRUTH'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _isTyping ? null : () => _addQuestion('DARE'),
+                icon: const Icon(Icons.whatshot),
+                label: const Text('DARE'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -124,13 +159,13 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
               Expanded(
                 child: ListView.builder(
                   controller: _scrollController,
-                  padding: const EdgeInsets.only(bottom: 100, top: 4),
+                  padding: const EdgeInsets.only(bottom: 16, top: 4),
                   itemCount: _messages.length + (_isTyping ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (_isTyping && index == _messages.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
-                        child: TypingIndicator(),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: TypingIndicator(label: _pendingType),
                       );
                     }
                     return BounceMessage(message: _messages[index]);
@@ -240,18 +275,37 @@ class _BounceMessageState extends State<BounceMessage>
 }
 
 class TypingIndicator extends StatelessWidget {
-  const TypingIndicator({super.key});
+  const TypingIndicator({
+    super.key,
+    required this.label,
+  });
+
+  final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        _dot(),
-        const SizedBox(width: 4),
-        _dot(),
-        const SizedBox(width: 4),
-        _dot(),
+        Text(
+          '$label...',
+          style: const TextStyle(
+            color: Colors.redAccent,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.8,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _dot(),
+            const SizedBox(width: 4),
+            _dot(),
+            const SizedBox(width: 4),
+            _dot(),
+          ],
+        ),
       ],
     );
   }

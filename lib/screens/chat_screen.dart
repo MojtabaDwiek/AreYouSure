@@ -55,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'HOW WELL DO YOU KNOW ME',
+            'DO YOU KNOW ME',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

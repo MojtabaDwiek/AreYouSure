@@ -19,7 +19,7 @@ class _TitleScreenState extends State<TitleScreen> {
 
   final List<Map<String, dynamic>> _pages = [
     {
-      'title': 'HOW WELL DO YOU KNOW ME',
+      'title': 'DO YOU KNOW ME',
       'icon': Icons.person_search,
       'color': Colors.cyan,
       'screen': const ChatScreen(),
