@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:areyousure/screens/chat_screen.dart';
 import 'package:areyousure/screens/motivation_screen.dart';
 import 'package:areyousure/screens/joke_screen.dart';
@@ -162,41 +163,99 @@ class _TitleScreenState extends State<TitleScreen> {
                       _pages[actualIndex]['screen'],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: AnimatedScale(
-                        duration: const Duration(milliseconds: 100),
-                        scale: _currentPage == actualIndex ? 1.0 : 0.9,
-                        child: Card(
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          color: Colors.grey[800],
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Icon(
-                                    _pages[actualIndex]['icon'],
-                                    size: 100,
-                                    color: _pages[actualIndex]['color'],
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                child: Text(
-                                  _pages[actualIndex]['title'],
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: _pages[actualIndex]['color'],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 24.0),
+                      child: AnimatedBuilder(
+                        animation: _pageController,
+                        builder: (context, child) {
+                          double page = _initialPage.toDouble();
+                          if (_pageController.hasClients && _pageController.position.haveDimensions) {
+                            page = _pageController.page ?? _initialPage.toDouble();
+                          }
+
+                          final double delta = index - page;
+                          final double distance = delta.abs().clamp(0.0, 1.0).toDouble();
+                          final double scale = 0.86 + (1 - distance) * 0.14;
+                          final double rotateY =
+                              (delta * 0.35).clamp(-0.35, 0.35).toDouble();
+
+                          return Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, 0.0012)
+                              ..rotateY(rotateY),
+                            child: Transform.scale(
+                              scale: scale,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(26),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.35),
+                                blurRadius: 24,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 14),
                               ),
                             ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(26),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(26),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.28),
+                                    width: 1.1,
+                                  ),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white.withOpacity(0.18),
+                                      Colors.white.withOpacity(0.07),
+                                    ],
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Center(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(18),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: _pages[actualIndex]['color'].withOpacity(0.12),
+                                          ),
+                                          child: Icon(
+                                            _pages[actualIndex]['icon'],
+                                            size: 90,
+                                            color: _pages[actualIndex]['color'],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 22),
+                                      child: Text(
+                                        _pages[actualIndex]['title'],
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: _pages[actualIndex]['color'],
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),

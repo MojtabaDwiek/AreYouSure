@@ -1,7 +1,5 @@
-import 'dart:math';
-
 import 'package:areyousure/data/wisdom.dart';
-import 'package:areyousure/models/message.dart';
+import 'package:areyousure/widgets/pull_question_deck.dart';
 import 'package:flutter/material.dart';
 
 class ChatWisdomScreen extends StatefulWidget {
@@ -11,14 +9,11 @@ class ChatWisdomScreen extends StatefulWidget {
   State<ChatWisdomScreen> createState() => _ChatWisdomScreenState();
 }
 
-class _ChatWisdomScreenState extends State<ChatWisdomScreen>
-    with SingleTickerProviderStateMixin {
-  final List<Message> _messages = [];
+class _ChatWisdomScreenState extends State<ChatWisdomScreen> {
   late WisdomGenerator _wisdomGenerator;
-  final ScrollController _scrollController = ScrollController();
   bool _isDarkMode = true;
   bool _isTyping = false;
-  String _pendingType = 'QUESTION';
+  String _selectedType = 'TRUTH';
 
   @override
   void initState() {
@@ -26,30 +21,20 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
     _wisdomGenerator = WisdomGenerator();
   }
 
-  Future<void> _addQuestion(String type) async {
+  Future<String> _addQuestion(String type) async {
     setState(() {
       _isTyping = true;
-      _pendingType = type;
     });
-
-    await Future.delayed(const Duration(seconds: 2));
 
     final question = type == 'TRUTH'
         ? _wisdomGenerator.generateTruth()
         : _wisdomGenerator.generateDare();
 
     setState(() {
-      _messages.add(Message(text: question, isUser: false));
       _isTyping = false;
     });
 
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (!_scrollController.hasClients) return;
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOut,
-    );
+    return question;
   }
 
   Widget _buildHeader() {
@@ -92,55 +77,9 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _isTyping ? null : () => _addQuestion('TRUTH'),
-                icon: const Icon(Icons.visibility),
-                label: const Text('TRUTH'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _isTyping ? null : () => _addQuestion('DARE'),
-                icon: const Icon(Icons.whatshot),
-                label: const Text('DARE'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -156,164 +95,86 @@ class _ChatWisdomScreenState extends State<ChatWisdomScreen>
           child: Column(
             children: [
               _buildHeader(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            'TRUTH',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        selected: _selectedType == 'TRUTH',
+                        onSelected: _isTyping
+                            ? null
+                            : (selected) {
+                                if (!selected) return;
+                                setState(() {
+                                  _selectedType = 'TRUTH';
+                                });
+                              },
+                        selectedColor: Colors.blueAccent,
+                        labelStyle: TextStyle(
+                          color: _selectedType == 'TRUTH'
+                              ? Colors.white
+                              : Colors.blueAccent,
+                        ),
+                        side: const BorderSide(color: Colors.blueAccent),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            'DARE',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        selected: _selectedType == 'DARE',
+                        onSelected: _isTyping
+                            ? null
+                            : (selected) {
+                                if (!selected) return;
+                                setState(() {
+                                  _selectedType = 'DARE';
+                                });
+                              },
+                        selectedColor: Colors.redAccent,
+                        labelStyle: TextStyle(
+                          color: _selectedType == 'DARE'
+                              ? Colors.white
+                              : Colors.redAccent,
+                        ),
+                        side: const BorderSide(color: Colors.redAccent),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.only(bottom: 16, top: 4),
-                  itemCount: _messages.length + (_isTyping ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (_isTyping && index == _messages.length) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        child: TypingIndicator(label: _pendingType),
-                      );
-                    }
-                    return BounceMessage(message: _messages[index]);
-                  },
+                child: PullQuestionDeck(
+                  accentColor: _selectedType == 'TRUTH'
+                      ? Colors.blueAccent
+                      : Colors.redAccent,
+                  label: _selectedType,
+                  icon: _selectedType == 'TRUTH'
+                      ? Icons.visibility
+                      : Icons.whatshot,
+                  onRevealQuestion: () => _addQuestion(_selectedType),
                 ),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class BounceMessage extends StatefulWidget {
-  final Message message;
-
-  const BounceMessage({
-    super.key,
-    required this.message,
-  });
-
-  @override
-  State<BounceMessage> createState() => _BounceMessageState();
-}
-
-class _BounceMessageState extends State<BounceMessage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _bounceAnimation;
-  double? _tiltAngle;
-
-  double _generateRandomTilt() {
-    final random = Random();
-    return (random.nextDouble() * 0.08) - 0.04;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _tiltAngle = _generateRandomTilt();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 700),
-      vsync: this,
-    );
-
-    _bounceAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.2), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.2, end: 0.9), weight: 20),
-      TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.0), weight: 30),
-    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _bounceAnimation,
-      builder: (context, child) {
-        return Center(
-          child: Transform.rotate(
-            angle: _tiltAngle ?? 0.0,
-            child: Transform.scale(
-              scale: _bounceAnimation.value,
-              child: Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.8,
-                ),
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Colors.redAccent,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 6,
-                      offset: Offset(2, 4),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  widget.message.text,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                    height: 1.3,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class TypingIndicator extends StatelessWidget {
-  const TypingIndicator({
-    super.key,
-    required this.label,
-  });
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          '$label...',
-          style: const TextStyle(
-            color: Colors.redAccent,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.8,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _dot(),
-            const SizedBox(width: 4),
-            _dot(),
-            const SizedBox(width: 4),
-            _dot(),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _dot() {
-    return const CircleAvatar(
-      radius: 4,
-      backgroundColor: Colors.redAccent,
     );
   }
 }

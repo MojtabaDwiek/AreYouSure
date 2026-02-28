@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:areyousure/data/jokes.dart';
 import 'package:areyousure/models/message.dart';
+import 'package:areyousure/widgets/pull_question_deck.dart';
 import 'package:flutter/material.dart';
 
 class ChatJokeScreen extends StatefulWidget {
@@ -13,11 +14,8 @@ class ChatJokeScreen extends StatefulWidget {
 
 class _ChatJokeScreenState extends State<ChatJokeScreen>
     with SingleTickerProviderStateMixin {
-  final List<Message> _messages = [];
   late JokeGenerator _jokeGenerator;
-  final ScrollController _scrollController = ScrollController();
   bool _isDarkMode = true;
-  bool _isTyping = false;
 
   @override
   void initState() {
@@ -25,27 +23,8 @@ class _ChatJokeScreenState extends State<ChatJokeScreen>
     _jokeGenerator = JokeGenerator();
   }
 
-  Future<void> _addQuestion() async {
-    setState(() {
-      _isTyping = true;
-    });
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    final question = _jokeGenerator.generateJoke();
-
-    setState(() {
-      _messages.add(Message(text: question, isUser: false));
-      _isTyping = false;
-    });
-
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (!_scrollController.hasClients) return;
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOut,
-    );
+  Future<String> _addQuestion() async {
+    return _jokeGenerator.generateJoke();
   }
 
   Widget _buildHeader() {
@@ -88,24 +67,9 @@ class _ChatJokeScreenState extends State<ChatJokeScreen>
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.white,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addQuestion,
-        label: const Text('NEXT QUESTION'),
-        icon: const Icon(Icons.chat_bubble_outline),
-        backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,
-        elevation: 10,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -122,19 +86,11 @@ class _ChatJokeScreenState extends State<ChatJokeScreen>
             children: [
               _buildHeader(),
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.only(bottom: 100, top: 4),
-                  itemCount: _messages.length + (_isTyping ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (_isTyping && index == _messages.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
-                        child: TypingIndicator(),
-                      );
-                    }
-                    return BounceMessage(message: _messages[index]);
-                  },
+                child: PullQuestionDeck(
+                  accentColor: Colors.orange,
+                  label: 'MOST LIKELY TO',
+                  icon: Icons.style,
+                  onRevealQuestion: _addQuestion,
                 ),
               ),
             ],
